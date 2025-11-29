@@ -11,6 +11,7 @@ const UserSchema = new Schema(
       minlength: 3,
       maxlength: 20,
       match: /^[a-zA-Z0-9_]+$/,
+      match: /^[a-zA-Z0-9]+$/,
     },
     email: {
       type: String,
@@ -27,6 +28,7 @@ const UserSchema = new Schema(
     },
     profile: {
       firs_name: { type: String, required: true, minlength: 2, maxlength: 50 },
+      first_name: { type: String, required: true, minlength: 2, maxlength: 50 },
       last_name: { type: String, required: true, minlength: 2, maxlength: 30 },
       biography: { type: String, maxlength: 500 },
       avatar_url: { type: String },
