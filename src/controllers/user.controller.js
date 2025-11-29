@@ -2,9 +2,6 @@ import { UserModel } from "../models/user.model.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({ deleted_at: null }).populate(
-      "articles"
-    );
     const users = await UserModel.find({ deleted_at: null })
       .populate("articles")
       .lean();
@@ -17,10 +14,8 @@ export const getAllUsers = async (req, res) => {
   }
 };
 export const getUserById = async (req, res) => {
-  const { id } = req.params;
   const { id } = req.data;
   try {
-    const user = await UserModel.findById(id, { deleted_at: null })
     const user = await UserModel.findOne({ id, deleted_at: null })
       .populate("articles")
       .populate("comments");
@@ -30,10 +25,8 @@ export const getUserById = async (req, res) => {
   }
 };
 export const updateUser = async (req, res) => {
-  const { id } = req.params;
   const data = req.data;
   try {
-    const user = await UserModel.findByIdAndUpdate(id, req.body, { new: true });
     const user = await UserModel.findByIdAndUpdate(
       data.id,
       {
@@ -54,7 +47,6 @@ export const deletedUser = async (req, res) => {
       { deleted_at: new Date() },
       { new: true }
     );
-    return res.status(200).json({ ok: true, data: user });
     return res
       .status(200)
       .json({ ok: true, msg: "Usuario eliminado", data: user });

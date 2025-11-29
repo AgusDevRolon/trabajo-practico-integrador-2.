@@ -1,8 +1,6 @@
-import { body } from "express-validator";
 import { body, param } from "express-validator";
 import { ArticleModel } from "../../models/article.model.js";
 
-export const articleValidations = [
 export const idArticleValidations = [
   param("id")
     .isMongoId()
@@ -81,7 +79,6 @@ export const updateArticleValidations = [
     .optional()
     .isIn(["published", "archived"])
     .withMessage("El estado debe ser 'published' o 'archived'"),
-  body("author").isMongoId().withMessage("El autor debe ser un ID válido"),
 
   body("author")
     .optional()
@@ -98,12 +95,10 @@ export const updateArticleValidations = [
   body("tags")
     .optional()
     .isArray()
-    .withMessage("Tags debe ser un array de IDs"),
     .withMessage("Las etiquetas deben ser un array de IDs"),
 
   body("tags.*")
     .optional()
     .isMongoId()
-    .withMessage("Cada tag debe ser un ID válido"),
     .withMessage("Cada etiqueta debe ser un ID válido"),
 ];
