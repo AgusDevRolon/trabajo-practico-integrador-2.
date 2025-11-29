@@ -10,7 +10,6 @@ const UserSchema = new Schema(
       lowercase: true,
       minlength: 3,
       maxlength: 20,
-      match: /^[a-zA-Z0-9_]+$/,
       match: /^[a-zA-Z0-9]+$/,
     },
     email: {
@@ -27,7 +26,6 @@ const UserSchema = new Schema(
       default: "user",
     },
     profile: {
-      firs_name: { type: String, required: true, minlength: 2, maxlength: 50 },
       first_name: { type: String, required: true, minlength: 2, maxlength: 50 },
       last_name: { type: String, required: true, minlength: 2, maxlength: 30 },
       biography: { type: String, maxlength: 500 },
@@ -37,9 +35,23 @@ const UserSchema = new Schema(
     deleted_at: { type: Date, default: null },
   },
   {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
     versionKey: false,
   }
 );
+
+UserSchema.virtual("articles", {
+  ref: "Article",
+  localField: "_id",
+  foreignField: "author",
+});
+
+UserSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "author",
+});
 
 export const UserModel = model("User", UserSchema);
