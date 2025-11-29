@@ -1,19 +1,13 @@
 import { UserModel } from "../models/user.model.js";
 
-export const createUser = async (req, res) => {
-  try {
-    const user = await UserModel.create(req.body);
-    return res.status(201).json({ ok: true, data: user });
-  } catch (error) {
-    return res.status(500).json({ ok: false, msg: "Internal server error" });
-  }
-};
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({ deleted_at: null });
     const users = await UserModel.find({ deleted_at: null }).populate(
       "articles"
     );
+    const users = await UserModel.find({ deleted_at: null })
+      .populate("articles")
+      .lean();
     if (!users || users.length === 0) {
       return res.status(404).json({ ok: false, msg: "No hay usuarios" });
     }
@@ -24,9 +18,10 @@ export const getAllUsers = async (req, res) => {
 };
 export const getUserById = async (req, res) => {
   const { id } = req.params;
+  const { id } = req.data;
   try {
-    const user = await UserModel.findById(id, { deleted_at: null });
     const user = await UserModel.findById(id, { deleted_at: null })
+    const user = await UserModel.findOne({ id, deleted_at: null })
       .populate("articles")
       .populate("comments");
     return res.status(200).json({ ok: true, data: user });
@@ -36,8 +31,16 @@ export const getUserById = async (req, res) => {
 };
 export const updateUser = async (req, res) => {
   const { id } = req.params;
+  const data = req.data;
   try {
     const user = await UserModel.findByIdAndUpdate(id, req.body, { new: true });
+    const user = await UserModel.findByIdAndUpdate(
+      data.id,
+      {
+        ...data,
+      },
+      { new: true }
+    );
     return res.status(200).json({ ok: true, data: user });
   } catch (error) {
     return res.status(500).json({ ok: false, msg: "Internal server error" });
@@ -52,6 +55,9 @@ export const deletedUser = async (req, res) => {
       { new: true }
     );
     return res.status(200).json({ ok: true, data: user });
+    return res
+      .status(200)
+      .json({ ok: true, msg: "Usuario eliminado", data: user });
   } catch (error) {
     return res.status(500).json({ ok: false, msg: "Internal server error" });
   }
